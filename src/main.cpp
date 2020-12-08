@@ -191,6 +191,8 @@ Rocket  *rocket1;
 float   Elapsed, Time;
 float   Velocity;
 bool    Launch;
+bool    Freeze;
+
 
 #define MS_PER_CYCLE	1000
 #define SCALE_AMOUNT    1000;
@@ -771,8 +773,6 @@ InitGraphics( )
     quad = gluNewQuadric(); // this is for the stem
     glColor3f(1., 0.0, 0.0);
     rocket1 = new Rocket(0., 1.0, 0.3);
-
-    Velocity = 1. / SCALE_AMOUNT;
 }
 
 
@@ -918,6 +918,17 @@ Keyboard( unsigned char c, int x, int y )
             Launch = true;
             break;
 
+        case 'f':
+        case 'F':
+            Freeze = !Freeze;
+
+            if (Freeze) {
+                glutIdleFunc(NULL);
+            } else {
+                glutIdleFunc(Animate);
+            }
+            break;
+
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
 	}
@@ -1043,6 +1054,8 @@ Reset( )
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
     Launch = false;
+    Freeze = false;
+    Velocity = 1. / SCALE_AMOUNT;
 }
 
 
