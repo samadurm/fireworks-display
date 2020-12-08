@@ -42,19 +42,17 @@ class Fireworks {
             if (exploded) { 
                 
             } else {
-                rocket->drawFireworks();
+                rocket->drawRocket();
             }
         }
 
-        void setColor(const GLfloat *color) {
-            this->color = *color;
-            rocket->setColor(color);
+        void setColor(float r, float g, float b) {
+            rocket->setColor(r, g, b);
         }
 
     private:
         Rocket *rocket;
         Explosion *explosion;
-        GLfloat color;
 
         float x, y, z;
         unsigned char rgb[3];

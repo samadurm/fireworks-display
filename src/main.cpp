@@ -184,6 +184,7 @@ GLUquadric* quad;
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
 int		WhichColor;				// index into Colors[ ]
+int     WhichRocketColor;       // index into colors of Rocket color
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
@@ -432,8 +433,9 @@ Display( )
     // glRotatef(-90., 1., 0., 0.);
     // glCallList(ConeList);
     // glPopMatrix();
-    
-    fireworks1->setColor(&Colors[WhichColor][0]);
+
+    const GLfloat *color1 = &Colors[WhichRocketColor][0];
+    fireworks1->setColor(color1[0], color1[1], color1[2]);
     fireworks1->bindRocket(ConeList, StemList);
 
     if (Launch) {
@@ -482,6 +484,14 @@ void
 DoAxesMenu( int id )
 {
 	AxesOn = id;
+
+	glutSetWindow( MainWindow );
+	glutPostRedisplay( );
+}
+
+void
+RocketColorMenu(int id) {
+    WhichRocketColor = id - RED;
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
@@ -632,7 +642,7 @@ InitMenus( )
 {
 	glutSetWindow( MainWindow );
 
-    int rocketmenu = glutCreateMenu( DoColorMenu );
+    int rocketmenu = glutCreateMenu( RocketColorMenu );
 
     glutAddMenuEntry(ColorNames[6], 6); // White
     glutAddMenuEntry(ColorNames[0], 0); // Red
@@ -1051,6 +1061,7 @@ Reset( )
 	DepthCueOn = 0;
 	Scale  = 1.0;
 	WhichColor = WHITE;
+    WhichRocketColor = RED;
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
     Launch = false;
