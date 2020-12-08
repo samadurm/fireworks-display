@@ -72,6 +72,12 @@ const float SCLFACT = { 0.005f };
 
 const float MINSCALE = { 0.05f };
 
+const int SCROLL_WHEEL_UP   = { 3 };
+const int SCROLL_WHEEL_DOWN = { 4 };
+
+// equivalent mouse movement when we click a the scroll wheel:
+
+const float SCROLL_WHEEL_CLICK_FACTOR = { 5. };
 
 // active mouse buttons (or them together):
 
@@ -939,6 +945,20 @@ MouseButton( int button, int state, int x, int y )
 
 		case GLUT_RIGHT_BUTTON:
 			b = RIGHT;		break;
+
+		case SCROLL_WHEEL_UP:
+			Scale += SCLFACT * SCROLL_WHEEL_CLICK_FACTOR;
+			// keep object from turning inside-out or disappearing:
+			if (Scale < MINSCALE)
+				Scale = MINSCALE;
+			break;
+
+		case SCROLL_WHEEL_DOWN:
+			Scale -= SCLFACT * SCROLL_WHEEL_CLICK_FACTOR;
+			// keep object from turning inside-out or disappearing:
+			if (Scale < MINSCALE)
+				Scale = MINSCALE;
+			break;
 
 		default:
 			b = 0;
