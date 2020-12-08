@@ -169,6 +169,7 @@ int		DebugOn;				// != 0 means to print debugging info
 int		DepthCueOn;				// != 0 means to use intensity depth cueing
 int		DepthBufferOn;			// != 0 means to use the z-buffer
 int		DepthFightingOn;		// != 0 means to use the z-buffer
+GLuint  PlaneList;
 GLuint	BoxList;				// object display list
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
@@ -267,6 +268,16 @@ Animate( )
 	// for Display( ) to find:
 
 	// force a call to Display( ) next time it is convenient:
+
+    // Idea: put an if statement where we start the normal 1 second (or half second) animation
+    // cycle for the explosion
+
+    // if (Exploded) {
+
+    // } else {
+    //     // else the rocket is traveling
+
+    // }
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
@@ -384,8 +395,12 @@ Display( )
 
 
 	// draw the current object:
-
-	glCallList( BoxList );
+    glPushMatrix();
+    glColor3f(0.5, 0.5, 0.5);
+    glTranslatef(0., 0., 0.);
+    glScalef(100., 0., 100.);
+	glCallList( PlaneList );
+    glPopMatrix();
 
 	if( DepthFightingOn != 0 )
 	{
@@ -732,59 +747,80 @@ InitLists( )
 	float dz = BOXSIZE / 2.f;
 	glutSetWindow( MainWindow );
 
-	// create the object:
+	// create the objects:
+    PlaneList = glGenLists(1);
+    glNewList(PlaneList, GL_COMPILE);
+        glBegin(GL_QUADS); 
+            glNormal3f(0., 1., 0.);
+            glTexCoord2f(0., 1.);
+            glVertex3f( -dx, -dy,  dz );
 
-	BoxList = glGenLists( 1 );
-	glNewList( BoxList, GL_COMPILE );
+            glNormal3f(0., 1., 0.);
+            glTexCoord2f(0., 0.);
+            glVertex3f( -dx, -dy, -dz );
 
-		glBegin( GL_QUADS );
+            glNormal3f(0., 1., 0.);
+            glTexCoord2f(1., 0.);
+            glVertex3f(  dx, -dy, -dz );
 
-			glColor3f( 0., 0., 1. );
-			glNormal3f( 0., 0.,  1. );
-				glVertex3f( -dx, -dy,  dz );
-				glVertex3f(  dx, -dy,  dz );
-				glVertex3f(  dx,  dy,  dz );
-				glVertex3f( -dx,  dy,  dz );
+            glNormal3f(0., 1., 0.);
+            glTexCoord2f(1., 1.);
+            glVertex3f(  dx, -dy,  dz );
+        glEnd();
+    glEndList();
 
-			glNormal3f( 0., 0., -1. );
-				glTexCoord2f( 0., 0. );
-				glVertex3f( -dx, -dy, -dz );
-				glTexCoord2f( 0., 1. );
-				glVertex3f( -dx,  dy, -dz );
-				glTexCoord2f( 1., 1. );
-				glVertex3f(  dx,  dy, -dz );
-				glTexCoord2f( 1., 0. );
-				glVertex3f(  dx, -dy, -dz );
 
-			glColor3f( 1., 0., 0. );
-			glNormal3f(  1., 0., 0. );
-				glVertex3f(  dx, -dy,  dz );
-				glVertex3f(  dx, -dy, -dz );
-				glVertex3f(  dx,  dy, -dz );
-				glVertex3f(  dx,  dy,  dz );
+	// BoxList = glGenLists( 1 );
+	// glNewList( BoxList, GL_COMPILE );
 
-			glNormal3f( -1., 0., 0. );
-				glVertex3f( -dx, -dy,  dz );
-				glVertex3f( -dx,  dy,  dz );
-				glVertex3f( -dx,  dy, -dz );
-				glVertex3f( -dx, -dy, -dz );
+	// 	glBegin( GL_QUADS );
 
-			glColor3f( 0., 1., 0. );
-			glNormal3f( 0.,  1., 0. );
-				glVertex3f( -dx,  dy,  dz );
-				glVertex3f(  dx,  dy,  dz );
-				glVertex3f(  dx,  dy, -dz );
-				glVertex3f( -dx,  dy, -dz );
+	// 		glColor3f( 0., 0., 1. );
+	// 		glNormal3f( 0., 0.,  1. );
+	// 			glVertex3f( -dx, -dy,  dz );
+	// 			glVertex3f(  dx, -dy,  dz );
+	// 			glVertex3f(  dx,  dy,  dz );
+	// 			glVertex3f( -dx,  dy,  dz );
 
-			glNormal3f( 0., -1., 0. );
-				glVertex3f( -dx, -dy,  dz );
-				glVertex3f( -dx, -dy, -dz );
-				glVertex3f(  dx, -dy, -dz );
-				glVertex3f(  dx, -dy,  dz );
+	// 		glNormal3f( 0., 0., -1. );
+	// 			glTexCoord2f( 0., 0. );
+	// 			glVertex3f( -dx, -dy, -dz );
+	// 			glTexCoord2f( 0., 1. );
+	// 			glVertex3f( -dx,  dy, -dz );
+	// 			glTexCoord2f( 1., 1. );
+	// 			glVertex3f(  dx,  dy, -dz );
+	// 			glTexCoord2f( 1., 0. );
+	// 			glVertex3f(  dx, -dy, -dz );
 
-		glEnd( );
+	// 		glColor3f( 1., 0., 0. );
+	// 		glNormal3f(  1., 0., 0. );
+	// 			glVertex3f(  dx, -dy,  dz );
+	// 			glVertex3f(  dx, -dy, -dz );
+	// 			glVertex3f(  dx,  dy, -dz );
+	// 			glVertex3f(  dx,  dy,  dz );
 
-	glEndList( );
+	// 		glNormal3f( -1., 0., 0. );
+	// 			glVertex3f( -dx, -dy,  dz );
+	// 			glVertex3f( -dx,  dy,  dz );
+	// 			glVertex3f( -dx,  dy, -dz );
+	// 			glVertex3f( -dx, -dy, -dz );
+
+	// 		glColor3f( 0., 1., 0. );
+	// 		glNormal3f( 0.,  1., 0. );
+	// 			glVertex3f( -dx,  dy,  dz );
+	// 			glVertex3f(  dx,  dy,  dz );
+	// 			glVertex3f(  dx,  dy, -dz );
+	// 			glVertex3f( -dx,  dy, -dz );
+
+	// 		glNormal3f( 0., -1., 0. );
+	// 			glVertex3f( -dx, -dy,  dz );
+	// 			glVertex3f( -dx, -dy, -dz );
+	// 			glVertex3f(  dx, -dy, -dz );
+	// 			glVertex3f(  dx, -dy,  dz );
+
+	// 	glEnd( );
+
+	// glEndList( );
 
 
 	// create the axes:
