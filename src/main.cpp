@@ -14,7 +14,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
-#include "rocket.hpp"
+#include "fireworks.hpp"
 
 
 //	This is an OpenGL / GLUT program which displays fireworks
@@ -187,7 +187,7 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
-Rocket  *rocket1;
+Fireworks  *fireworks1;
 float   Elapsed, Time;
 float   Velocity;
 bool    Launch;
@@ -433,13 +433,13 @@ Display( )
     // glCallList(ConeList);
     // glPopMatrix();
     
-    rocket1->setColor(&Colors[WhichColor][0]);
-    rocket1->bindObjects(ConeList, StemList);
+    fireworks1->setColor(&Colors[WhichColor][0]);
+    fireworks1->bindRocket(ConeList, StemList);
 
     if (Launch) {
-        rocket1->accelerate(Velocity);
+        fireworks1->processMovement(Velocity, Time);
     }
-    rocket1->drawFireworks();
+    fireworks1->drawFireworks();
 
 	if( DepthFightingOn != 0 )
 	{
@@ -772,7 +772,7 @@ InitGraphics( )
 
     quad = gluNewQuadric(); // this is for the stem
     glColor3f(1., 0.0, 0.0);
-    rocket1 = new Rocket(0., 1.0, 0.3);
+    fireworks1 = new Fireworks(0., 1.0, 0.3);
 }
 
 
@@ -1055,7 +1055,7 @@ Reset( )
 	Xrot = Yrot = 0.;
     Launch = false;
     Freeze = false;
-    Velocity = 1. / SCALE_AMOUNT;
+    Velocity = 1.8 / SCALE_AMOUNT;
 }
 
 
