@@ -14,6 +14,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
+#include "rocket.hpp"
 
 
 //	This is an OpenGL / GLUT program which displays fireworks
@@ -171,6 +172,9 @@ int		DepthBufferOn;			// != 0 means to use the z-buffer
 int		DepthFightingOn;		// != 0 means to use the z-buffer
 GLuint  PlaneList;
 GLuint	BoxList;				// object display list
+GLuint  ConeList;
+GLuint  StemList;
+GLUquadric* quad;
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
 int		WhichColor;				// index into Colors[ ]
@@ -401,6 +405,17 @@ Display( )
     glScalef(100., 0., 100.);
 	glCallList( PlaneList );
     glPopMatrix();
+
+    // glPushMatrix();
+    // glColor3f(1., 0.0, 0.0);
+    // glTranslatef(0., 1.0, 0.3);
+    // glRotatef(-90., 1., 0., 0.);
+    // glCallList(ConeList);
+    // glPopMatrix();
+    glColor3f(1., 0.0, 0.0);
+    Rocket rocket(3, 0., 1.0, 0.3, ConeList, StemList);
+    rocket.drawRocket();
+
 
 	if( DepthFightingOn != 0 )
 	{
@@ -731,6 +746,7 @@ InitGraphics( )
 	fprintf( stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif
 
+    quad = gluNewQuadric(); // this is for the stem
 }
 
 
@@ -769,6 +785,17 @@ InitLists( )
         glEnd();
     glEndList();
 
+    ConeList = glGenLists(1);
+        // glTranslatef(0., 1., 0.);
+        glNewList(ConeList, GL_COMPILE);
+        glutSolidCone(0.2, 1., 50, 120);
+    glEndList();
+
+    StemList = glGenLists(1);
+        glNewList(StemList, GL_COMPILE);
+            glRotatef(90., 1., 0., 0.);
+            gluCylinder(quad, 0.02, 0.02, 1., 50., 50.);
+     glEndList();
 
 	// BoxList = glGenLists( 1 );
 	// glNewList( BoxList, GL_COMPILE );
