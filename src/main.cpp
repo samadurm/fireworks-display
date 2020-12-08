@@ -72,6 +72,12 @@ const float SCLFACT = { 0.005f };
 
 const float MINSCALE = { 0.05f };
 
+const int SCROLL_WHEEL_UP   = { 3 };
+const int SCROLL_WHEEL_DOWN = { 4 };
+
+// equivalent mouse movement when we click a the scroll wheel:
+
+const float SCROLL_WHEEL_CLICK_FACTOR = { 5. };
 
 // active mouse buttons (or them together):
 
@@ -181,7 +187,13 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
+Rocket  *rocket1;
+float   Elapsed, Time;
+float   Velocity;
 
+
+#define MS_PER_CYCLE	1000
+#define SCALE_AMOUNT    1000;
 
 // function prototypes:
 
@@ -276,12 +288,19 @@ Animate( )
     // Idea: put an if statement where we start the normal 1 second (or half second) animation
     // cycle for the explosion
 
-    // if (Exploded) {
+    int ms = glutGet( GLUT_ELAPSED_TIME );
+    Elapsed = ms;
+    ms %= MS_PER_CYCLE;
+    Time = (float)ms / (float)MS_PER_CYCLE;		// [0.,1.)
 
-    // } else {
-    //     // else the rocket is traveling
+    const float g = 9.8; // 9.8 m/s 
 
-    // }
+    if (Velocity > 0 && Time < 0.01) {
+        printf("Velocity is: %f\n", Velocity);
+        Velocity -= g / SCALE_AMOUNT;
+    } else if (Velocity < 0) {
+        Velocity = 0.;
+    }
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
@@ -351,7 +370,7 @@ Display( )
 
 	// set the eye position, look-at position, and up-vector:
 
-	gluLookAt( 0., 0., 3.,     0., 0., 0.,     0., 1., 0. );
+	gluLookAt( 0., 0., 10.,     0., 0., 0.,     0., 1., 0. );
 
 
 	// rotate the scene:
@@ -397,14 +416,13 @@ Display( )
 
 	glEnable( GL_NORMALIZE );
 
-
 	// draw the current object:
-    glPushMatrix();
-    glColor3f(0.5, 0.5, 0.5);
-    glTranslatef(0., 0., 0.);
-    glScalef(100., 0., 100.);
-	glCallList( PlaneList );
-    glPopMatrix();
+    // glPushMatrix();
+    // glColor3f(0.5, 0.5, 0.5);
+    // glTranslatef(0., 0., 0.);
+    // glScalef(100., 0., 100.);
+	// glCallList( PlaneList );
+    // glPopMatrix();
 
     // glPushMatrix();
     // glColor3f(1., 0.0, 0.0);
@@ -412,10 +430,12 @@ Display( )
     // glRotatef(-90., 1., 0., 0.);
     // glCallList(ConeList);
     // glPopMatrix();
-    glColor3f(1., 0.0, 0.0);
-    Rocket rocket(3, 0., 1.0, 0.3, ConeList, StemList);
-    rocket.drawRocket();
+    
+    rocket1->setColor(&Colors[WhichColor][0]);
+    rocket1->bindObjects(ConeList, StemList);
 
+    rocket1->accelerate(Velocity);
+    rocket1->drawFireworks();
 
 	if( DepthFightingOn != 0 )
 	{
@@ -731,7 +751,7 @@ InitGraphics( )
 	glutTabletButtonFunc( NULL );
 	glutMenuStateFunc( NULL );
 	glutTimerFunc( -1, NULL, 0 );
-	glutIdleFunc( NULL );
+	glutIdleFunc( Animate );
 
 	// init glew (a window must be open to do this):
 
@@ -747,6 +767,10 @@ InitGraphics( )
 #endif
 
     quad = gluNewQuadric(); // this is for the stem
+    glColor3f(1., 0.0, 0.0);
+    rocket1 = new Rocket(0., 1.0, 0.3);
+
+    Velocity = 1. / SCALE_AMOUNT;
 }
 
 
@@ -921,6 +945,20 @@ MouseButton( int button, int state, int x, int y )
 
 		case GLUT_RIGHT_BUTTON:
 			b = RIGHT;		break;
+
+		case SCROLL_WHEEL_UP:
+			Scale += SCLFACT * SCROLL_WHEEL_CLICK_FACTOR;
+			// keep object from turning inside-out or disappearing:
+			if (Scale < MINSCALE)
+				Scale = MINSCALE;
+			break;
+
+		case SCROLL_WHEEL_DOWN:
+			Scale -= SCLFACT * SCROLL_WHEEL_CLICK_FACTOR;
+			// keep object from turning inside-out or disappearing:
+			if (Scale < MINSCALE)
+				Scale = MINSCALE;
+			break;
 
 		default:
 			b = 0;
