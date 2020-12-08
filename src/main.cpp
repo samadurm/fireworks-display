@@ -180,6 +180,7 @@ GLuint  PlaneList;
 GLuint	BoxList;				// object display list
 GLuint  ConeList;
 GLuint  StemList;
+GLuint  ParticleList;
 GLUquadric* quad;
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
@@ -436,12 +437,15 @@ Display( )
 
     const GLfloat *color1 = &Colors[WhichRocketColor][0];
     fireworks1->setColor(color1[0], color1[1], color1[2]);
-    fireworks1->bindRocket(ConeList, StemList);
+    fireworks1->bindObjects(ConeList, StemList, ParticleList);
+    // fireworks1->bindParticles(ParticleList);
 
     if (Launch) {
         fireworks1->processMovement(Velocity, Time);
     }
     fireworks1->drawFireworks();
+    
+    glCallList(ParticleList);
 
 	if( DepthFightingOn != 0 )
 	{
@@ -833,58 +837,10 @@ InitLists( )
             gluCylinder(quad, 0.02, 0.02, 1., 50., 50.);
      glEndList();
 
-	// BoxList = glGenLists( 1 );
-	// glNewList( BoxList, GL_COMPILE );
-
-	// 	glBegin( GL_QUADS );
-
-	// 		glColor3f( 0., 0., 1. );
-	// 		glNormal3f( 0., 0.,  1. );
-	// 			glVertex3f( -dx, -dy,  dz );
-	// 			glVertex3f(  dx, -dy,  dz );
-	// 			glVertex3f(  dx,  dy,  dz );
-	// 			glVertex3f( -dx,  dy,  dz );
-
-	// 		glNormal3f( 0., 0., -1. );
-	// 			glTexCoord2f( 0., 0. );
-	// 			glVertex3f( -dx, -dy, -dz );
-	// 			glTexCoord2f( 0., 1. );
-	// 			glVertex3f( -dx,  dy, -dz );
-	// 			glTexCoord2f( 1., 1. );
-	// 			glVertex3f(  dx,  dy, -dz );
-	// 			glTexCoord2f( 1., 0. );
-	// 			glVertex3f(  dx, -dy, -dz );
-
-	// 		glColor3f( 1., 0., 0. );
-	// 		glNormal3f(  1., 0., 0. );
-	// 			glVertex3f(  dx, -dy,  dz );
-	// 			glVertex3f(  dx, -dy, -dz );
-	// 			glVertex3f(  dx,  dy, -dz );
-	// 			glVertex3f(  dx,  dy,  dz );
-
-	// 		glNormal3f( -1., 0., 0. );
-	// 			glVertex3f( -dx, -dy,  dz );
-	// 			glVertex3f( -dx,  dy,  dz );
-	// 			glVertex3f( -dx,  dy, -dz );
-	// 			glVertex3f( -dx, -dy, -dz );
-
-	// 		glColor3f( 0., 1., 0. );
-	// 		glNormal3f( 0.,  1., 0. );
-	// 			glVertex3f( -dx,  dy,  dz );
-	// 			glVertex3f(  dx,  dy,  dz );
-	// 			glVertex3f(  dx,  dy, -dz );
-	// 			glVertex3f( -dx,  dy, -dz );
-
-	// 		glNormal3f( 0., -1., 0. );
-	// 			glVertex3f( -dx, -dy,  dz );
-	// 			glVertex3f( -dx, -dy, -dz );
-	// 			glVertex3f(  dx, -dy, -dz );
-	// 			glVertex3f(  dx, -dy,  dz );
-
-	// 	glEnd( );
-
-	// glEndList( );
-
+    ParticleList = glGenLists(1);
+        glNewList(ParticleList, GL_COMPILE);
+        glutSolidSphere(.01, 25, 25);
+    glEndList();
 
 	// create the axes:
 
