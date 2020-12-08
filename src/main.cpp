@@ -181,6 +181,9 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
+Rocket  *rocket1;
+float   Elapsed, Time;
+#define MS_PER_CYCLE	1000
 
 
 // function prototypes:
@@ -276,6 +279,11 @@ Animate( )
     // Idea: put an if statement where we start the normal 1 second (or half second) animation
     // cycle for the explosion
 
+    int ms = glutGet( GLUT_ELAPSED_TIME );
+    Elapsed = ms;
+    ms %= MS_PER_CYCLE;
+    Time = (float)ms / (float)MS_PER_CYCLE;		// [0.,1.)
+
     // if (Exploded) {
 
     // } else {
@@ -351,7 +359,7 @@ Display( )
 
 	// set the eye position, look-at position, and up-vector:
 
-	gluLookAt( 0., 0., 3.,     0., 0., 0.,     0., 1., 0. );
+	gluLookAt( 0., 0., 10.,     0., 0., 0.,     0., 1., 0. );
 
 
 	// rotate the scene:
@@ -397,7 +405,6 @@ Display( )
 
 	glEnable( GL_NORMALIZE );
 
-
 	// draw the current object:
     glPushMatrix();
     glColor3f(0.5, 0.5, 0.5);
@@ -412,9 +419,13 @@ Display( )
     // glRotatef(-90., 1., 0., 0.);
     // glCallList(ConeList);
     // glPopMatrix();
-    glColor3f(1., 0.0, 0.0);
-    Rocket rocket(3, 0., 1.0, 0.3, ConeList, StemList);
-    rocket.drawRocket();
+    
+    rocket1->setColor(&Colors[WhichColor][0]);
+    rocket1->bindObjects(ConeList, StemList);
+
+    // rocket1->accelerate(-0.098); // -g
+    // rocket1->move(0.0001*Elapsed);
+    rocket1->drawFireworks();
 
 
 	if( DepthFightingOn != 0 )
@@ -731,7 +742,7 @@ InitGraphics( )
 	glutTabletButtonFunc( NULL );
 	glutMenuStateFunc( NULL );
 	glutTimerFunc( -1, NULL, 0 );
-	glutIdleFunc( NULL );
+	glutIdleFunc( Animate );
 
 	// init glew (a window must be open to do this):
 
@@ -747,6 +758,8 @@ InitGraphics( )
 #endif
 
     quad = gluNewQuadric(); // this is for the stem
+    glColor3f(1., 0.0, 0.0);
+    rocket1 = new Rocket(0.1, 0., 1.0, 0.3);
 }
 
 
