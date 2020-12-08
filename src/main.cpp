@@ -183,8 +183,11 @@ int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 Rocket  *rocket1;
 float   Elapsed, Time;
-#define MS_PER_CYCLE	1000
+float   Velocity;
 
+
+#define MS_PER_CYCLE	1000
+#define SCALE_AMOUNT    1000;
 
 // function prototypes:
 
@@ -284,12 +287,14 @@ Animate( )
     ms %= MS_PER_CYCLE;
     Time = (float)ms / (float)MS_PER_CYCLE;		// [0.,1.)
 
-    // if (Exploded) {
+    const float g = 9.8; // 9.8 m/s 
 
-    // } else {
-    //     // else the rocket is traveling
-
-    // }
+    if (Velocity > 0 && Time < 0.01) {
+        printf("Velocity is: %f\n", Velocity);
+        Velocity -= g / SCALE_AMOUNT;
+    } else if (Velocity < 0) {
+        Velocity = 0.;
+    }
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
@@ -406,12 +411,12 @@ Display( )
 	glEnable( GL_NORMALIZE );
 
 	// draw the current object:
-    glPushMatrix();
-    glColor3f(0.5, 0.5, 0.5);
-    glTranslatef(0., 0., 0.);
-    glScalef(100., 0., 100.);
-	glCallList( PlaneList );
-    glPopMatrix();
+    // glPushMatrix();
+    // glColor3f(0.5, 0.5, 0.5);
+    // glTranslatef(0., 0., 0.);
+    // glScalef(100., 0., 100.);
+	// glCallList( PlaneList );
+    // glPopMatrix();
 
     // glPushMatrix();
     // glColor3f(1., 0.0, 0.0);
@@ -423,10 +428,8 @@ Display( )
     rocket1->setColor(&Colors[WhichColor][0]);
     rocket1->bindObjects(ConeList, StemList);
 
-    // rocket1->accelerate(-0.098); // -g
-    // rocket1->move(0.0001*Elapsed);
+    rocket1->accelerate(Velocity);
     rocket1->drawFireworks();
-
 
 	if( DepthFightingOn != 0 )
 	{
@@ -759,7 +762,9 @@ InitGraphics( )
 
     quad = gluNewQuadric(); // this is for the stem
     glColor3f(1., 0.0, 0.0);
-    rocket1 = new Rocket(0.1, 0., 1.0, 0.3);
+    rocket1 = new Rocket(0., 1.0, 0.3);
+
+    Velocity = 1. / SCALE_AMOUNT;
 }
 
 

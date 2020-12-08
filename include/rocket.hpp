@@ -9,8 +9,8 @@
 
 class Rocket {
     public:
-        Rocket(float velocity, float x, float y, float z)
-            : velocity(0.1), x(x), y(y), z(z) {
+        Rocket(float x, float y, float z)
+            : x(x), y(y), z(z) {
                 height = 0.2;
                 isExploded = false;
             }
@@ -21,18 +21,11 @@ class Rocket {
             this->stem = stem;
         }
 
-        // void move(float amount) {
-        //     this->y += amount;
-        // }
-
-        void accelerate(const float g) {
+        void accelerate(float velocity) {
             if (velocity > 0) {
-                velocity -= g;
                 y += velocity;
-                printf("Velocity is now %f and y is %f\n", velocity, y);
-            } else if (velocity < 0) {
-                velocity = 0;
-                isExploded = true;
+            } else {
+                //isExploded = true;
             }
         }
 
@@ -68,11 +61,10 @@ class Rocket {
         }
 
         void drawExplosion() {
-            printf("Rocket has exploded, must draw fireworks");
+            printf("Rocket has exploded, must draw fireworks\n");
         }
         
-
-        float velocity, x, y, z;
+        float x, y, z;
         float height;
         GLuint cone, stem;
         GLfloat color;
