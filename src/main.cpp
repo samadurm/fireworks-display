@@ -190,7 +190,7 @@ float	Xrot, Yrot;				// rotation angles in degrees
 Rocket  *rocket1;
 float   Elapsed, Time;
 float   Velocity;
-
+bool    Launch;
 
 #define MS_PER_CYCLE	1000
 #define SCALE_AMOUNT    1000;
@@ -295,7 +295,7 @@ Animate( )
 
     const float g = 9.8; // 9.8 m/s 
 
-    if (Velocity > 0 && Time < 0.01) {
+    if (Velocity > 0 && Time < 0.01 && Launch) {
         printf("Velocity is: %f\n", Velocity);
         Velocity -= g / SCALE_AMOUNT;
     } else if (Velocity < 0) {
@@ -434,7 +434,9 @@ Display( )
     rocket1->setColor(&Colors[WhichColor][0]);
     rocket1->bindObjects(ConeList, StemList);
 
-    rocket1->accelerate(Velocity);
+    if (Launch) {
+        rocket1->accelerate(Velocity);
+    }
     rocket1->drawFireworks();
 
 	if( DepthFightingOn != 0 )
@@ -911,6 +913,11 @@ Keyboard( unsigned char c, int x, int y )
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
 
+        case 'l':
+        case 'L':
+            Launch = true;
+            break;
+
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
 	}
@@ -1035,6 +1042,7 @@ Reset( )
 	WhichColor = WHITE;
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
+    Launch = false;
 }
 
 
