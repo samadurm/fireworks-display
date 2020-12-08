@@ -183,6 +183,7 @@ float	Xrot, Yrot;				// rotation angles in degrees
 void	Animate( );
 void	Display( );
 void	DoAxesMenu( int );
+void	DoRocketColorMenu( int );
 void	DoColorMenu( int );
 void	DoDepthBufferMenu( int );
 void	DoDepthFightingMenu( int );
@@ -432,7 +433,6 @@ DoAxesMenu( int id )
 	glutPostRedisplay( );
 }
 
-
 void
 DoColorMenu( int id )
 {
@@ -578,6 +578,14 @@ InitMenus( )
 {
 	glutSetWindow( MainWindow );
 
+    int rocketmenu = glutCreateMenu( DoColorMenu );
+
+    glutAddMenuEntry(ColorNames[6], 6); // White
+    glutAddMenuEntry(ColorNames[0], 0); // Red
+    glutAddMenuEntry(ColorNames[2], 2); // Green
+    glutAddMenuEntry(ColorNames[4], 4); // Blue
+
+
 	int numColors = sizeof( Colors ) / ( 3*sizeof(int) );
 	int colormenu = glutCreateMenu( DoColorMenu );
 	for( int i = 0; i < numColors; i++ )
@@ -611,6 +619,7 @@ InitMenus( )
 
 	int mainmenu = glutCreateMenu( DoMainMenu );
 	glutAddSubMenu(   "Axes",          axesmenu);
+    glutAddSubMenu(   "Fireworks Color", rocketmenu);
 	glutAddSubMenu(   "Colors",        colormenu);
 	glutAddSubMenu(   "Depth Buffer",  depthbuffermenu);
 	glutAddSubMenu(   "Depth Fighting",depthfightingmenu);
