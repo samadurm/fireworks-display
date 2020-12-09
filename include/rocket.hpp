@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
+#include "lighting.hpp"
 
 class Rocket {
     public:
@@ -32,8 +33,6 @@ class Rocket {
         void accelerate(float velocity) {
             if (velocity > 0) {
                 y += velocity;
-            } else {
-                //isExploded = true;
             }
         }
 
@@ -45,9 +44,11 @@ class Rocket {
 
         void drawRocket() {
             
+            SetPointLight(GL_LIGHT1, x, y + 0.8, z, .5, .5, .5);
+
             // this is the rocket portion
             glPushMatrix();
-                glColor3f(color[0], color[1], color[2]);
+                SetMaterial(color[0], color[1], color[2], 1.);
                 glTranslatef(x, y, z);
                 glScalef(1.5, 1.5, 1.5);
                 glCallList(cone);
@@ -55,7 +56,7 @@ class Rocket {
 
             // this is the stem portion
             glPushMatrix();
-                glColor3f(1., 1., 1.);
+                SetMaterial(1., 1., 1., 1.);
                 glTranslatef(x, y, z);
                 glScalef(1.5, 1.5, 1.5);
                 glCallList(stem);

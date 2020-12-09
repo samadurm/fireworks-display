@@ -15,6 +15,7 @@
 #include <GL/glu.h>
 #include "glut.h"
 #include "fireworks.hpp"
+#include "lighting.hpp"
 #include "mjbcone.hpp"
 
 
@@ -225,7 +226,6 @@ void	MouseMotion( int, int );
 void	Reset( );
 void	Resize( int, int );
 void	Visibility( int );
-
 void	Axes( float );
 void	HsvRgb( float[3], float [3] );
 
@@ -301,7 +301,6 @@ Animate( )
     const float g = 9.8; // 9.8 m/s 
 
     if (Velocity > 0 && Time < 0.01 && Launch) {
-        printf("Velocity is: %f\n", Velocity);
         Velocity -= g / SCALE_AMOUNT;
     } else if (Velocity < 0) {
         Velocity = 0.;
@@ -419,18 +418,25 @@ Display( )
 
 	// since we are using glScalef( ), be sure normals get unitized:
 
+    glEnable( GL_LIGHTING );
 	glEnable( GL_NORMALIZE );
+    glShadeModel( GL_SMOOTH );
+
+    float WhiteLight[  ] = { 1.,1.,1.,1. };
+
+
+    glLightModelfv( GL_LIGHT_MODEL_AMBIENT, MulArray3( .3f,WhiteLight ) );
 
 	// draw the current object:
-    // glPushMatrix();
-    // glColor3f(0.5, 0.5, 0.5);
-    // glTranslatef(0., 0., 0.);
-    // glScalef(100., 0., 100.);
-	// glCallList( PlaneList );
-    // glPopMatrix();
+    glPushMatrix();
+        glColor3f(0.5, 0.5, 0.5);
+        glTranslatef(0., 0., 0.);
+        glScalef(100., 0., 100.);
+        glCallList( PlaneList );
+    glPopMatrix();
 
     glPushMatrix();
-        glColor3f(0.6, 0.65, 0.55);
+        SetMaterial(0.6, 0.65, 0.55, 1.);
         glTranslatef(0., .9, 0.3);
         glScalef(3., .9, 3.);
         glCallList(StemList);
@@ -453,6 +459,7 @@ Display( )
 		glPopMatrix( );
 	}
 
+    glDisable( GL_LIGHTING );
 
 
 	// the projection matrix is reset to define a scene whose
@@ -1011,6 +1018,8 @@ MouseMotion( int x, int y )
 void
 Reset( )
 {
+    delete fireworks1; // delete the old object before reinitializing
+
 	ActiveButton = 0;
 	AxesOn = 1;
 	DebugOn = 0;
@@ -1019,14 +1028,12 @@ Reset( )
 	DepthCueOn = 0;
 	Scale  = 1.0;
 	WhichColor = WHITE;
-    WhichRocketColor = RED;
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
     Launch = false;
     Freeze = false;
-    Velocity = 1.8 / SCALE_AMOUNT;
+    Velocity = 2.2 / SCALE_AMOUNT;
 
-    glColor3f(1., 0.0, 0.0);
     fireworks1 = new Fireworks(0., 1.5, 0.3);
 }
 
