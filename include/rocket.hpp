@@ -49,7 +49,6 @@ class Rocket {
             glPushMatrix();
                 glColor3f(color[0], color[1], color[2]);
                 glTranslatef(x, y, z);
-                glRotatef(-90., 1., 0., 0.);
                 glScalef(1.5, 1.5, 1.5);
                 glCallList(cone);
             glPopMatrix();

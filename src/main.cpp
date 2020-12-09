@@ -15,6 +15,7 @@
 #include <GL/glu.h>
 #include "glut.h"
 #include "fireworks.hpp"
+#include "mjbcone.hpp"
 
 
 //	This is an OpenGL / GLUT program which displays fireworks
@@ -823,9 +824,8 @@ InitLists( )
     glEndList();
 
     ConeList = glGenLists(1);
-        // glTranslatef(0., 1., 0.);
         glNewList(ConeList, GL_COMPILE);
-        glutSolidCone(0.2, 1., 50, 120);
+        MjbCone(0.2, 0.01, 0.8, 50., 50.);
     glEndList();
 
     StemList = glGenLists(1);
