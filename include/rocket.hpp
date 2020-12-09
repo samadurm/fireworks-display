@@ -9,9 +9,8 @@
 
 class Rocket {
     public:
-        Rocket(float x, float y, float z)
-            : x(x), y(y), z(z) {
-                height = 0.2;
+        Rocket(float x, float y, float z, float height)
+            : x(x), y(y), z(z), height(height) {
                 isExploded = false;
                 color = new float[3];
             }

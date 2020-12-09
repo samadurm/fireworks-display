@@ -13,8 +13,9 @@ class Fireworks {
 
         Fireworks(float x, float y, float z) 
             : x(x), y(y), z(z) {
-                rocket = new Rocket(x, y, z);
-                explosion = new Explosion(10); // set the explosion to have 10 particles
+                rocketHeight = 0.2;
+                rocket = new Rocket(x, y, z, rocketHeight);
+                explosion = new Explosion(20); // set the explosion to have 10 particles
                 exploded = false;
             }
         ~Fireworks() {}
@@ -28,12 +29,12 @@ class Fireworks {
             
             if (v == 0. && !exploded) {
                 exploded = true;
-                explosion->setOriginPoint(x, y, z);
+                explosion->setOriginPoint(x, y+rocketHeight + 1, z);
                 explosion->setOriginTime(t);
             }
             
             if (exploded) {
-
+                explosion->updateParticles(t);
             } else {
                 printf("v is %f\n", v);
                 rocket->accelerate(v);
@@ -57,7 +58,7 @@ class Fireworks {
         Rocket *rocket;
         Explosion *explosion;
 
-        float x, y, z;
+        float x, y, z, rocketHeight;
         unsigned char rgb[3];
         bool exploded;
 };

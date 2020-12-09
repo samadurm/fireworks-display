@@ -441,12 +441,10 @@ Display( )
     // fireworks1->bindParticles(ParticleList);
 
     if (Launch) {
-        fireworks1->processMovement(Velocity, Time);
+        fireworks1->processMovement(Velocity, Elapsed);
     }
     fireworks1->drawFireworks();
     
-    glCallList(ParticleList);
-
 	if( DepthFightingOn != 0 )
 	{
 		glPushMatrix( );
@@ -839,7 +837,7 @@ InitLists( )
 
     ParticleList = glGenLists(1);
         glNewList(ParticleList, GL_COMPILE);
-        glutSolidSphere(.01, 25, 25);
+        glutSolidSphere(.1, 25, 25);
     glEndList();
 
 	// create the axes:
