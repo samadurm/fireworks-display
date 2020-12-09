@@ -15,6 +15,7 @@
 #include <GL/glu.h>
 #include "glut.h"
 #include "fireworks.hpp"
+#include "mjbcone.hpp"
 
 
 //	This is an OpenGL / GLUT program which displays fireworks
@@ -428,29 +429,21 @@ Display( )
 	// glCallList( PlaneList );
     // glPopMatrix();
 
-    // glPushMatrix();
-    // glColor3f(1., 0.0, 0.0);
-    // glTranslatef(0., 1.0, 0.3);
-    // glRotatef(-90., 1., 0., 0.);
-    // glCallList(ConeList);
-    // glPopMatrix();
-
     glPushMatrix();
         glColor3f(0.6, 0.65, 0.55);
-        glTranslatef(0., .5, 0.3);
-        glScalef(2.5, .5, 2.5);
+        glTranslatef(0., .9, 0.3);
+        glScalef(3., .9, 3.);
         glCallList(StemList);
     glPopMatrix();
 
     const GLfloat *color1 = &Colors[WhichRocketColor][0];
     fireworks1->setColor(color1[0], color1[1], color1[2]);
     fireworks1->bindObjects(ConeList, StemList, ParticleList);
-    // fireworks1->bindParticles(ParticleList);
 
     if (Launch) {
         fireworks1->processMovement(Velocity, Elapsed);
     }
-    fireworks1->drawFireworks();
+    fireworks1->drawFireworks(Elapsed);
     
 	if( DepthFightingOn != 0 )
 	{
@@ -652,14 +645,16 @@ InitMenus( )
 	glutSetWindow( MainWindow );
 
     int rocketmenu = glutCreateMenu( RocketColorMenu );
-
-    glutAddMenuEntry(ColorNames[6], 6); // White
-    glutAddMenuEntry(ColorNames[0], 0); // Red
-    glutAddMenuEntry(ColorNames[2], 2); // Green
-    glutAddMenuEntry(ColorNames[4], 4); // Blue
-
-
 	int numColors = sizeof( Colors ) / ( 3*sizeof(int) );
+
+	for( int i = 0; i < numColors; i++ )
+	{
+        // only add colors that can be seen
+        if (i != BLACK) {
+            glutAddMenuEntry( ColorNames[i], i );
+        }
+	}
+
 	int colormenu = glutCreateMenu( DoColorMenu );
 	for( int i = 0; i < numColors; i++ )
 	{
@@ -790,8 +785,6 @@ InitGraphics( )
 #endif
 
     quad = gluNewQuadric(); // this is for the stem
-    glColor3f(1., 0.0, 0.0);
-    fireworks1 = new Fireworks(0., 1.0, 0.3);
 }
 
 
@@ -831,9 +824,8 @@ InitLists( )
     glEndList();
 
     ConeList = glGenLists(1);
-        // glTranslatef(0., 1., 0.);
         glNewList(ConeList, GL_COMPILE);
-        glutSolidCone(0.2, 1., 50, 120);
+        MjbCone(0.2, 0.01, 0.8, 50., 50.);
     glEndList();
 
     StemList = glGenLists(1);
@@ -898,6 +890,11 @@ Keyboard( unsigned char c, int x, int y )
             } else {
                 glutIdleFunc(Animate);
             }
+            break;
+
+        case 'r':
+        case 'R':
+            Reset();
             break;
 
 		default:
@@ -1028,6 +1025,9 @@ Reset( )
     Launch = false;
     Freeze = false;
     Velocity = 1.8 / SCALE_AMOUNT;
+
+    glColor3f(1., 0.0, 0.0);
+    fireworks1 = new Fireworks(0., 1.5, 0.3);
 }
 
 

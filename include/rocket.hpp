@@ -9,14 +9,20 @@
 
 class Rocket {
     public:
-        Rocket(float x, float y, float z, float height)
-            : x(x), y(y), z(z), height(height) {
+        Rocket(float x, float y, float z)
+            : x(x), y(y), z(z) {
                 isExploded = false;
                 color = new float[3];
             }
         ~Rocket() {
             delete [] color;
         }
+
+        float getX() { return x; }
+
+        float getY() { return y; }
+
+        float getZ() { return z; }
 
         void bindObjects(GLuint cone, GLuint stem) {
             this->cone = cone;
@@ -43,7 +49,7 @@ class Rocket {
             glPushMatrix();
                 glColor3f(color[0], color[1], color[2]);
                 glTranslatef(x, y, z);
-                glRotatef(-90., 1., 0., 0.);
+                glScalef(1.5, 1.5, 1.5);
                 glCallList(cone);
             glPopMatrix();
 
@@ -51,13 +57,13 @@ class Rocket {
             glPushMatrix();
                 glColor3f(1., 1., 1.);
                 glTranslatef(x, y, z);
+                glScalef(1.5, 1.5, 1.5);
                 glCallList(stem);
             glPopMatrix();
         }
 
     private:
         float x, y, z;
-        float height;
         GLuint cone, stem;
         float *color;
         bool isExploded;
