@@ -790,8 +790,6 @@ InitGraphics( )
 #endif
 
     quad = gluNewQuadric(); // this is for the stem
-    glColor3f(1., 0.0, 0.0);
-    fireworks1 = new Fireworks(0., 1.0, 0.3);
 }
 
 
@@ -1028,6 +1026,9 @@ Reset( )
     Launch = false;
     Freeze = false;
     Velocity = 1.8 / SCALE_AMOUNT;
+
+    glColor3f(1., 0.0, 0.0);
+    fireworks1 = new Fireworks(0., 1.0, 0.3);
 }
 
 
