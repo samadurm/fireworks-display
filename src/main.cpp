@@ -17,6 +17,7 @@
 #include "fireworks.hpp"
 #include "lighting.hpp"
 #include "mjbcone.hpp"
+#include "texture_mapping.hpp"
 
 
 //	This is an OpenGL / GLUT program which displays fireworks
