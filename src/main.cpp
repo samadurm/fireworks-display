@@ -435,6 +435,13 @@ Display( )
     // glCallList(ConeList);
     // glPopMatrix();
 
+    glPushMatrix();
+        glColor3f(0.6, 0.65, 0.55);
+        glTranslatef(0., .5, 0.3);
+        glScalef(2.5, .5, 2.5);
+        glCallList(StemList);
+    glPopMatrix();
+
     const GLfloat *color1 = &Colors[WhichRocketColor][0];
     fireworks1->setColor(color1[0], color1[1], color1[2]);
     fireworks1->bindObjects(ConeList, StemList, ParticleList);
