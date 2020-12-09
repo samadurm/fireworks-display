@@ -15,6 +15,7 @@
 #include <GL/glu.h>
 #include "glut.h"
 #include "fireworks.hpp"
+#include "lighting.hpp"
 #include "mjbcone.hpp"
 
 
@@ -225,7 +226,6 @@ void	MouseMotion( int, int );
 void	Reset( );
 void	Resize( int, int );
 void	Visibility( int );
-
 void	Axes( float );
 void	HsvRgb( float[3], float [3] );
 
@@ -1024,7 +1024,7 @@ Reset( )
 	Xrot = Yrot = 0.;
     Launch = false;
     Freeze = false;
-    Velocity = 1.8 / SCALE_AMOUNT;
+    Velocity = 2.2 / SCALE_AMOUNT;
 
     glColor3f(1., 0.0, 0.0);
     fireworks1 = new Fireworks(0., 1.5, 0.3);
