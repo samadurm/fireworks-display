@@ -898,6 +898,11 @@ Keyboard( unsigned char c, int x, int y )
             }
             break;
 
+        case 'r':
+        case 'R':
+            Reset();
+            break;
+
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
 	}
