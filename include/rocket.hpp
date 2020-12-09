@@ -9,14 +9,20 @@
 
 class Rocket {
     public:
-        Rocket(float x, float y, float z, float height)
-            : x(x), y(y), z(z), height(height) {
+        Rocket(float x, float y, float z)
+            : x(x), y(y), z(z) {
                 isExploded = false;
                 color = new float[3];
             }
         ~Rocket() {
             delete [] color;
         }
+
+        float getX() { return x; }
+
+        float getY() { return y; }
+
+        float getZ() { return z; }
 
         void bindObjects(GLuint cone, GLuint stem) {
             this->cone = cone;
@@ -57,7 +63,6 @@ class Rocket {
 
     private:
         float x, y, z;
-        float height;
         GLuint cone, stem;
         float *color;
         bool isExploded;
