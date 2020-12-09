@@ -11,6 +11,7 @@ class Explosion {
             color = new float[3];
             duration = 1000.; // 1000ms = 1 second
             radius = 0.2;
+            v = 0.1; // this is the particle velocity
         }
 
         ~Explosion() {
@@ -40,9 +41,15 @@ class Explosion {
         }
 
         void updateParticles(float time) {
-            // printf("time is %f, originTime is %f, endtime is %f\n", time, originTime, endTime);
             if (time < endTime) {
-                radius += ((time - originTime) / 1000.) / 1000.;
+
+                const float g = 9.8 / 1000;
+                const float deltaT = 0.01;
+
+                v -= g * deltaT;
+                float deltaP = v * deltaT + 0.5 * (-g) * powf(deltaT, 2);
+
+                radius += deltaP;
             }
         }
 
@@ -57,8 +64,6 @@ class Explosion {
                 glTranslatef(originX, originY+mid, originZ);
                 glCallList(particleList);
             glPopMatrix();
-
-            const float g = 9.8 / 1000;
 
             for (int i = 0; i < numParticles; i++) {
                 glPushMatrix();
@@ -75,7 +80,7 @@ class Explosion {
     private:
         int numParticles;
         float originX, originY, originZ;
-        float originTime, endTime, duration, radius;
+        float originTime, endTime, duration, radius, v;
         float *color;
 
         GLuint particleList;
