@@ -652,14 +652,16 @@ InitMenus( )
 	glutSetWindow( MainWindow );
 
     int rocketmenu = glutCreateMenu( RocketColorMenu );
-
-    glutAddMenuEntry(ColorNames[6], 6); // White
-    glutAddMenuEntry(ColorNames[0], 0); // Red
-    glutAddMenuEntry(ColorNames[2], 2); // Green
-    glutAddMenuEntry(ColorNames[4], 4); // Blue
-
-
 	int numColors = sizeof( Colors ) / ( 3*sizeof(int) );
+
+	for( int i = 0; i < numColors; i++ )
+	{
+        // only add colors that can be seen
+        if (i != BLACK) {
+            glutAddMenuEntry( ColorNames[i], i );
+        }
+	}
+
 	int colormenu = glutCreateMenu( DoColorMenu );
 	for( int i = 0; i < numColors; i++ )
 	{
@@ -1033,7 +1035,7 @@ Reset( )
     Velocity = 1.8 / SCALE_AMOUNT;
 
     glColor3f(1., 0.0, 0.0);
-    fireworks1 = new Fireworks(0., 1.0, 0.3);
+    fireworks1 = new Fireworks(0., 1.5, 0.3);
 }
 
 
