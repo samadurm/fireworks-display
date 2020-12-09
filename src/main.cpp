@@ -450,7 +450,7 @@ Display( )
     if (Launch) {
         fireworks1->processMovement(Velocity, Elapsed);
     }
-    fireworks1->drawFireworks();
+    fireworks1->drawFireworks(Elapsed);
     
 	if( DepthFightingOn != 0 )
 	{

@@ -53,28 +53,27 @@ class Explosion {
             }
         }
 
-        void drawParticles() {
+        void drawParticles(float time) {
             
             float angle = 2. * M_PI / (float)(numParticles - 1);
             float ang = 0.;
             float mid = 0.2;
 
-            glPushMatrix();
-                glColor3f(color[0], color[1], color[2]);
-                glTranslatef(originX, originY+mid, originZ);
-                glCallList(particleList);
-            glPopMatrix();
-
-            for (int i = 0; i < numParticles; i++) {
+            if (time < endTime) {
                 glPushMatrix();
-                    glTranslatef(radius * cos(ang) + originX, radius * sin(ang) + originY, originZ);
+                    glColor3f(color[0], color[1], color[2]);
+                    glTranslatef(originX, originY+mid, originZ);
                     glCallList(particleList);
-                    ang += angle;
                 glPopMatrix();
-            }
-            // if (time < endTime) {
 
-            // }
+                for (int i = 0; i < numParticles; i++) {
+                    glPushMatrix();
+                        glTranslatef(radius * cos(ang) + originX, radius * sin(ang) + originY, originZ);
+                        glCallList(particleList);
+                        ang += angle;
+                    glPopMatrix();
+                }
+            }
         }
 
     private:
@@ -82,6 +81,5 @@ class Explosion {
         float originX, originY, originZ;
         float originTime, endTime, duration, radius, v;
         float *color;
-
         GLuint particleList;
 };

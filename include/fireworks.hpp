@@ -41,9 +41,9 @@ class Fireworks {
             }
         }
 
-        void drawFireworks() {
+        void drawFireworks(float time) {
             if (exploded) { 
-                explosion->drawParticles();
+                explosion->drawParticles(time);
             } else {
                 rocket->drawRocket();
             }
