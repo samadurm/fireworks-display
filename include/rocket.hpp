@@ -9,12 +9,14 @@
 
 class Rocket {
     public:
-        Rocket(float x, float y, float z)
-            : x(x), y(y), z(z) {
-                height = 0.2;
+        Rocket(float x, float y, float z, float height)
+            : x(x), y(y), z(z), height(height) {
                 isExploded = false;
+                color = new float[3];
             }
-        ~Rocket() {}
+        ~Rocket() {
+            delete [] color;
+        }
 
         void bindObjects(GLuint cone, GLuint stem) {
             this->cone = cone;
@@ -29,24 +31,17 @@ class Rocket {
             }
         }
 
-        void drawFireworks() {
-            if (isExploded) {
-                drawExplosion();
-            } else {
-                drawRocket();
-            }
+        void setColor(float r, float g, float b) {
+            color[0] = r;
+            color[1] = g;
+            color[2] = b;
         }
 
-        void setColor(const GLfloat *color) {
-            this->color = *color;
-        }
-
-    private:
         void drawRocket() {
             
             // this is the rocket portion
             glPushMatrix();
-                glColor3fv(&color);
+                glColor3f(color[0], color[1], color[2]);
                 glTranslatef(x, y, z);
                 glRotatef(-90., 1., 0., 0.);
                 glCallList(cone);
@@ -60,13 +55,10 @@ class Rocket {
             glPopMatrix();
         }
 
-        void drawExplosion() {
-            printf("Rocket has exploded, must draw fireworks\n");
-        }
-        
+    private:
         float x, y, z;
         float height;
         GLuint cone, stem;
-        GLfloat color;
+        float *color;
         bool isExploded;
 };

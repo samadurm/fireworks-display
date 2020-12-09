@@ -14,7 +14,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
-#include "rocket.hpp"
+#include "fireworks.hpp"
 
 
 //	This is an OpenGL / GLUT program which displays fireworks
@@ -180,16 +180,20 @@ GLuint  PlaneList;
 GLuint	BoxList;				// object display list
 GLuint  ConeList;
 GLuint  StemList;
+GLuint  ParticleList;
 GLUquadric* quad;
 int		MainWindow;				// window id for main graphics window
 float	Scale;					// scaling factor
 int		WhichColor;				// index into Colors[ ]
+int     WhichRocketColor;       // index into colors of Rocket color
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
-Rocket  *rocket1;
+Fireworks  *fireworks1;
 float   Elapsed, Time;
 float   Velocity;
+bool    Launch;
+bool    Freeze;
 
 
 #define MS_PER_CYCLE	1000
@@ -295,7 +299,7 @@ Animate( )
 
     const float g = 9.8; // 9.8 m/s 
 
-    if (Velocity > 0 && Time < 0.01) {
+    if (Velocity > 0 && Time < 0.01 && Launch) {
         printf("Velocity is: %f\n", Velocity);
         Velocity -= g / SCALE_AMOUNT;
     } else if (Velocity < 0) {
@@ -430,13 +434,17 @@ Display( )
     // glRotatef(-90., 1., 0., 0.);
     // glCallList(ConeList);
     // glPopMatrix();
+
+    const GLfloat *color1 = &Colors[WhichRocketColor][0];
+    fireworks1->setColor(color1[0], color1[1], color1[2]);
+    fireworks1->bindObjects(ConeList, StemList, ParticleList);
+    // fireworks1->bindParticles(ParticleList);
+
+    if (Launch) {
+        fireworks1->processMovement(Velocity, Elapsed);
+    }
+    fireworks1->drawFireworks();
     
-    rocket1->setColor(&Colors[WhichColor][0]);
-    rocket1->bindObjects(ConeList, StemList);
-
-    rocket1->accelerate(Velocity);
-    rocket1->drawFireworks();
-
 	if( DepthFightingOn != 0 )
 	{
 		glPushMatrix( );
@@ -478,6 +486,14 @@ void
 DoAxesMenu( int id )
 {
 	AxesOn = id;
+
+	glutSetWindow( MainWindow );
+	glutPostRedisplay( );
+}
+
+void
+RocketColorMenu(int id) {
+    WhichRocketColor = id - RED;
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
@@ -628,7 +644,7 @@ InitMenus( )
 {
 	glutSetWindow( MainWindow );
 
-    int rocketmenu = glutCreateMenu( DoColorMenu );
+    int rocketmenu = glutCreateMenu( RocketColorMenu );
 
     glutAddMenuEntry(ColorNames[6], 6); // White
     glutAddMenuEntry(ColorNames[0], 0); // Red
@@ -768,9 +784,7 @@ InitGraphics( )
 
     quad = gluNewQuadric(); // this is for the stem
     glColor3f(1., 0.0, 0.0);
-    rocket1 = new Rocket(0., 1.0, 0.3);
-
-    Velocity = 1. / SCALE_AMOUNT;
+    fireworks1 = new Fireworks(0., 1.0, 0.3);
 }
 
 
@@ -821,58 +835,10 @@ InitLists( )
             gluCylinder(quad, 0.02, 0.02, 1., 50., 50.);
      glEndList();
 
-	// BoxList = glGenLists( 1 );
-	// glNewList( BoxList, GL_COMPILE );
-
-	// 	glBegin( GL_QUADS );
-
-	// 		glColor3f( 0., 0., 1. );
-	// 		glNormal3f( 0., 0.,  1. );
-	// 			glVertex3f( -dx, -dy,  dz );
-	// 			glVertex3f(  dx, -dy,  dz );
-	// 			glVertex3f(  dx,  dy,  dz );
-	// 			glVertex3f( -dx,  dy,  dz );
-
-	// 		glNormal3f( 0., 0., -1. );
-	// 			glTexCoord2f( 0., 0. );
-	// 			glVertex3f( -dx, -dy, -dz );
-	// 			glTexCoord2f( 0., 1. );
-	// 			glVertex3f( -dx,  dy, -dz );
-	// 			glTexCoord2f( 1., 1. );
-	// 			glVertex3f(  dx,  dy, -dz );
-	// 			glTexCoord2f( 1., 0. );
-	// 			glVertex3f(  dx, -dy, -dz );
-
-	// 		glColor3f( 1., 0., 0. );
-	// 		glNormal3f(  1., 0., 0. );
-	// 			glVertex3f(  dx, -dy,  dz );
-	// 			glVertex3f(  dx, -dy, -dz );
-	// 			glVertex3f(  dx,  dy, -dz );
-	// 			glVertex3f(  dx,  dy,  dz );
-
-	// 		glNormal3f( -1., 0., 0. );
-	// 			glVertex3f( -dx, -dy,  dz );
-	// 			glVertex3f( -dx,  dy,  dz );
-	// 			glVertex3f( -dx,  dy, -dz );
-	// 			glVertex3f( -dx, -dy, -dz );
-
-	// 		glColor3f( 0., 1., 0. );
-	// 		glNormal3f( 0.,  1., 0. );
-	// 			glVertex3f( -dx,  dy,  dz );
-	// 			glVertex3f(  dx,  dy,  dz );
-	// 			glVertex3f(  dx,  dy, -dz );
-	// 			glVertex3f( -dx,  dy, -dz );
-
-	// 		glNormal3f( 0., -1., 0. );
-	// 			glVertex3f( -dx, -dy,  dz );
-	// 			glVertex3f( -dx, -dy, -dz );
-	// 			glVertex3f(  dx, -dy, -dz );
-	// 			glVertex3f(  dx, -dy,  dz );
-
-	// 	glEnd( );
-
-	// glEndList( );
-
+    ParticleList = glGenLists(1);
+        glNewList(ParticleList, GL_COMPILE);
+        glutSolidSphere(.1, 25, 25);
+    glEndList();
 
 	// create the axes:
 
@@ -910,6 +876,22 @@ Keyboard( unsigned char c, int x, int y )
 		case ESCAPE:
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
+
+        case 'l':
+        case 'L':
+            Launch = true;
+            break;
+
+        case 'f':
+        case 'F':
+            Freeze = !Freeze;
+
+            if (Freeze) {
+                glutIdleFunc(NULL);
+            } else {
+                glutIdleFunc(Animate);
+            }
+            break;
 
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
@@ -1033,8 +1015,12 @@ Reset( )
 	DepthCueOn = 0;
 	Scale  = 1.0;
 	WhichColor = WHITE;
+    WhichRocketColor = RED;
 	WhichProjection = PERSP;
 	Xrot = Yrot = 0.;
+    Launch = false;
+    Freeze = false;
+    Velocity = 1.8 / SCALE_AMOUNT;
 }
 
 
