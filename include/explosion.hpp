@@ -3,13 +3,14 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "glut.h"
+#include "lighting.hpp"
 
 class Explosion {
     public:
         Explosion(int numParticles) 
             : numParticles(numParticles) {
             color = new float[3];
-            duration = 1000.; // 1000ms = 1 second
+            duration = 1500.; // 1000ms = 1 second
             radius = 0.2;
             v = 0.1; // this is the particle velocity
         }
@@ -37,7 +38,6 @@ class Explosion {
         void setOriginTime(float time) {
             originTime = time;
             endTime = time + duration;
-            printf("origin time %f and endtime is %f\n", originTime, endTime);
         }
 
         void updateParticles(float time) {
@@ -61,15 +61,20 @@ class Explosion {
 
             if (time < endTime) {
                 glPushMatrix();
-                    glColor3f(color[0], color[1], color[2]);
+                    SetMaterial(color[0], color[1], color[2], 1.);
                     glTranslatef(originX, originY+mid, originZ);
                     glCallList(particleList);
+                    SetPointLight(GL_LIGHT2, originX, originY+mid, originZ, 0.5, 0.5, 0.5);
+
                 glPopMatrix();
 
                 for (int i = 0; i < numParticles; i++) {
                     glPushMatrix();
                         glTranslatef(radius * cos(ang) + originX, radius * sin(ang) + originY, originZ);
+                        SetMaterial(color[0], color[1], color[2], 1.);
                         glCallList(particleList);
+                        SetPointLight(GL_LIGHT3, radius * cos(ang) + originX, radius * sin(ang) + originY, originZ, 0.5, 0.5, 0.5);
+
                         ang += angle;
                     glPopMatrix();
                 }
